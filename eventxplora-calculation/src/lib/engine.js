@@ -105,8 +105,13 @@ export function computeEngine(cfg) {
 
   const organizerGross = cfg.ticketPrice * qty;
   const organizerNetSales = organizerGross - couponOrgCost * qty;
-  const organizerPlatformDeduction = platformFee * orgRplatform * qty;
-  const organizerPgDeduction = pgFee * orgRpg * qty;
+  // Organizer is billed fee + its GST for whichever fees it bears (mirrors buyerPayable logic).
+  const organizerPlatformFeeAmount = platformFee * orgRplatform * qty;
+  const organizerPlatformFeeGstAmount = platformFeeGst * orgRplatform * qty;
+  const organizerPlatformDeduction = organizerPlatformFeeAmount + organizerPlatformFeeGstAmount;
+  const organizerPgFeeAmount = pgFee * orgRpg * qty;
+  const organizerPgFeeGstAmount = pgGst * orgRpg * qty;
+  const organizerPgDeduction = organizerPgFeeAmount + organizerPgFeeGstAmount;
   const organizerTds = tds * qty;
   const organizerNetPayout =
     organizerNetSales - organizerPlatformDeduction - organizerPgDeduction - organizerTds;
@@ -114,7 +119,8 @@ export function computeEngine(cfg) {
   const platformFeeRevenue = platformFee * qty;
   const convenienceRevenue = convFee * qty;
   const platformGrossRevenue = platformFeeRevenue + convenienceRevenue;
-  const pgCostBorneByPlatform = pgFee * platRpg * qty;
+  // Platform is billed fee + GST for PG cost when platform itself bears the PG fee.
+  const pgCostBorneByPlatform = (pgFee + pgGst) * platRpg * qty;
   const platformGstPayable = (platformFeeGst + convGst) * qty;
   const platformContribution =
     platformGrossRevenue - pgCostBorneByPlatform - couponPlatCost * qty;
@@ -141,7 +147,11 @@ export function computeEngine(cfg) {
     couponPlatCost,
     organizerGross,
     organizerNetSales,
+    organizerPlatformFeeAmount,
+    organizerPlatformFeeGstAmount,
     organizerPlatformDeduction,
+    organizerPgFeeAmount,
+    organizerPgFeeGstAmount,
     organizerPgDeduction,
     organizerTds,
     organizerNetPayout,

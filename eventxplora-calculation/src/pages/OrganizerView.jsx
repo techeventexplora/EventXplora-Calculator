@@ -123,11 +123,27 @@ export default function OrganizerView() {
             />
           )}
           <StatRow label="Net ticket sales" value={r.organizerNetSales} strong />
-          {r.organizerPlatformDeduction > 0 && (
-            <StatRow label="Platform fee / commission" value={r.organizerPlatformDeduction} negative />
+          {r.organizerPlatformFeeAmount > 0 && (
+            <>
+              <StatRow label="Platform fee / commission" value={r.organizerPlatformFeeAmount} negative />
+              <StatRow
+                label={`GST on platform fee (${adminConfig.platformFeeGstPct}%)`}
+                value={r.organizerPlatformFeeGstAmount}
+                negative
+                muted
+              />
+            </>
           )}
-          {r.organizerPgDeduction > 0 && (
-            <StatRow label="Payment gateway fee" value={r.organizerPgDeduction} negative />
+          {r.organizerPgFeeAmount > 0 && (
+            <>
+              <StatRow label="Payment gateway fee" value={r.organizerPgFeeAmount} negative />
+              <StatRow
+                label={`GST on PG fee (${adminConfig.pgGstPct}%)`}
+                value={r.organizerPgFeeGstAmount}
+                negative
+                muted
+              />
+            </>
           )}
           {adminConfig.tdsApplicable && (
             <StatRow label={`TDS (Sec 194-O, ${adminConfig.tdsPct}%)`} value={r.organizerTds} negative />
